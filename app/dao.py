@@ -67,7 +67,7 @@ def tao_nhom_moi(id_nguoi_dung_1,id_nguoi_dung_2):
         nguoi_dung_1 = NguoiDung.query.filter(NguoiDung.id_nguoi_dung == id_nguoi_dung_1).first()
         nguoi_dung_2 = NguoiDung.query.filter(NguoiDung.id_nguoi_dung == id_nguoi_dung_2).first()
 
-        nhom = Nhom(ten_nhom = nguoi_dung_1.ten_nguoi_dung+"_"+nguoi_dung_2.ten_nguoi_dung)
+        nhom = Nhom(ten_nhom = nguoi_dung_1.tai_khoan+"_"+nguoi_dung_2.tai_khoan)
         db.session.add(nhom)
         db.session.commit()
 
