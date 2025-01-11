@@ -155,22 +155,48 @@ const taoNhom = (id_nguoi_dung) => {
         if (divNhom) {
             divDsNhom.removeChild(divNhom)
         }
+
+        divDsNhom = document.getElementById("idDivDsNhomChat")
+        divNhom = document.getElementById(`idDivNhomTinNhan${data.nhom.id_nhom}`)
+        divDsNhom.removeChild(divNhom)
         divDsNhom.innerHTML =
-            `  
-            <div class="div-nhom-tin-nhan" id="idDivNhomTinNhan${data.id_nhom}">
-                <button class="button-nhom-tin-nhan" onclick="chonNhom(${data.id_nhom},'${data.ten_nguoi_dung}','${data.hinh_anh}')">
+            `
+            <div class="div-nhom-tin-nhan" id = "idDivNhomTinNhan${data.nhom.id_nhom}">
+                <button class="button-nhom-tin-nhan" onclick="chonNhom(${data.nhom.id_nhom},'${data.nhom.ten_nguoi_dung}','${data.nhom.hinh_anh}')">
                     <div class="div-avatar-nhom-tin-nhan">
-                        <img class="img-avatar-nhom-tin-nhan" src="${data.hinh_anh}"/>
+                        <img class="img-avatar-nhom-tin-nhan" src="${data.nhom.hinh_anh}"/>
                     </div>
                     <div class="div-thong-tin-nhom-tin-nhan">
-                        <h3 class="h1-ten-nhom-tin-nhan">${data.ten_nguoi_dung}</h3>
-                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.noi_dung)}</div>
+                        <h3 class="h1-ten-nhom-tin-nhan">${data.nhom.ten_nguoi_dung}</h3>
+                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.nhom.noi_dung)}</div>
                     </div>
                 </button>
-            </div>  
-            ` + divDsNhom.innerHTML
+            </div>
+            `+ divDsNhom.innerHTML
+
         inputThanhTimKiem.value = ""
 
+        var divDsTinNhan = document.getElementById("idDivDsTinNhan")
+        divDsTinNhan.innerHTML = ``
+
+        for (tinNhan of data.ds_tin_nhan) {
+            clas = "trai"
+            if (tinNhan.kiem_tra) {
+                clas = "phai"
+            }
+            divDsTinNhan.innerHTML +=
+                `
+                <div class="div-tin-nhan-${clas}">
+                    <div class="div-block-${clas}">
+                        ${layDuLieu(tinNhan.noi_dung)}
+                    </div>
+                </div >
+            `
+            divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
+
+            var divNhapLieuNutGui = document.querySelector(`#idDivNhomTinNhan${idNhomHienThi} .div-thong-tin-nhom-tin-nhan`)
+            divNhapLieuNutGui.classList.remove("div-thong-tin-nhom-tin-nhan-2")
+        }
     })
 
 }
@@ -238,7 +264,7 @@ const chonNhom = (idNhom, tenNguoiDung, hinhAnh) => {
 
 const gui = () => {
     var inputNhapLieu = document.getElementById("idInputNhapLieu")
-    if (inputNhapLieu.value.trim() != "") {
+    if (inputNhapLieu != "") {
 
         fetch("/api/TaoTinNhanMoi", {
             "method": "POST",

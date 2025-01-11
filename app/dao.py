@@ -80,9 +80,16 @@ def tao_nhom_moi(id_nguoi_dung_1,id_nguoi_dung_2):
     except:
         db.session.rollback()
         nhom = Nhom.query.filter(Nhom.ten_nhom == nguoi_dung_1.ten_nguoi_dung+"_"+nguoi_dung_2.ten_nguoi_dung).first()
-        return lay_nhom(id_nhom=nhom.id_nhom,id_nguoi_dung=id_nguoi_dung_2)
-    else:
-        return lay_nhom(id_nhom=nhom.id_nhom,id_nguoi_dung=id_nguoi_dung_2)
+    finally:
+        ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == nhom.id_nhom).all()
+        ds_tin_nhan_2 =[]
+        for tin_nhan in ds_tin_nhan:
+            ds_tin_nhan_2.append({"noi_dung": tin_nhan.noi_dung,
+                              "kiem_tra": tin_nhan.id_nguoi_dung == id_nguoi_dung_2})
+        
+        return {"nhom":lay_nhom(id_nhom=nhom.id_nhom,id_nguoi_dung=id_nguoi_dung_2),
+                "ds_tin_nhan": ds_tin_nhan_2}
+
 
 def lay_nhom(id_nhom,id_nguoi_dung):
     nguoi_dung_1 = aliased(NguoiDung)
@@ -131,6 +138,7 @@ def tao_tin_nhan_moi(id_nhom,noi_dung,id_nguoi_dung):
     db.session.commit()
 
     nhom_chat_2 = lay_nhom(id_nguoi_dung=id_nguoi_dung,id_nhom=id_nhom)
+    
     return nhom_chat_2
 
 def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
