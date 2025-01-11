@@ -1,0 +1,21 @@
+.nen {
+    background-color: lightblue;
+    height: 100%;
+    padding-top: 230px;
+
+    .form-dang-nhap {
+        background-color: white;
+
+        .thong-diep {
+            color: red
+        }
+
+        div {
+            height: 50px;
+
+            input {
+                height: 100%;
+            }
+        }
+    }
+}
