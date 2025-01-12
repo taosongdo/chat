@@ -62,7 +62,7 @@ const loadNhapTimKiem = () => {
                     divDsKetQua.innerHTML +=
                         `
                         <div class="div-ket-qua" id="idDivKetQua${timKiem.id_nguoi_dung}">
-                            <button class="button-ket-qua" onclick="taoNhom(${timKiem.id_nguoi_dung})">
+                            <button class="button-ket-qua" onclick="taoNhom('${timKiem.id_nguoi_dung}','${timKiem.hinh_anh}')">
                                 <div class="div-avatar-ket-qua">
                                     <img class="img-avatar-ket-qua" src="${timKiem.hinh_anh}"/>
                                 </div>
@@ -133,7 +133,7 @@ const loadNhomTinNhan = () => {
     })
 }
 
-const taoNhom = (id_nguoi_dung) => {
+const taoNhom = (id_nguoi_dung,hinh_anh) => {
     fetch("/api/TaoNhomMoi", {
         "method": "POST",
         "body": JSON.stringify({
@@ -199,7 +199,22 @@ const taoNhom = (id_nguoi_dung) => {
                 </div >
             `
             divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
+        }
 
+        var divThongTinNhomTinNhanChon = document.getElementById("idDivThongTinNhomTinNhanChon")
+        divThongTinNhomTinNhanChon.innerHTML =
+            `
+                <div class="div-avatar-nhom-tin-nhan-chon">
+                    <img class="img-avatar-nhom-tin-nhan-chon" src="${hinh_anh}" />
+                </div>
+                <h1 class="div-ten-nhom-tin-nhan-chon">${data.nhom.ten_nguoi_dung}</h1>
+                `
+            
+        if (window.innerWidth < 768) {
+            var divNhomTinNhanChon = document.getElementById("idDivNhomTinNhanChon")
+            var divDsBan = document.getElementById("idDivDsBan")
+            divNhomTinNhanChon.classList.remove("d-none")
+            divDsBan.classList.add("d-none")
         }
     })
 
