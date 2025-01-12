@@ -334,7 +334,6 @@ const layDuLieuTheoThoiGian = () => {
                 "Content-type": "application/json"
             }
         }).then(res => res.json()).then(dsNhom => {
-            console.log(dsNhom)
             divDsNhom = document.getElementById("idDivDsNhomChat")
             dsNhom2 = ``
             for (nhom of dsNhom) {
