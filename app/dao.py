@@ -132,7 +132,7 @@ def lay_nhom(id_nhom,id_nguoi_dung):
     nhom_chat_2 = {"id_nhom":nhom_chat.id_nhom,
                    "ten_nguoi_dung":nhom_chat.ten_nguoi_dung,
                    "hinh_anh": nhom_chat.hinh_anh,
-                   "noi_dung": thong_tin_khac[0]}
+                   "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn nào"}
     return nhom_chat_2
 
 def tao_tin_nhan_moi(id_nhom,noi_dung,id_nguoi_dung):
@@ -198,7 +198,6 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     for nguoidung_tinnhan in ds_nguoidung_tinnhan:
         nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
 
-    print(ds_nhom_chat_2)
 
     ds_nguoidung_tinnhan = db.session.query(NguoiDung_TinNhan)\
     .join(NguoiDung,NguoiDung_TinNhan.id_nguoi_dung == NguoiDung.id_nguoi_dung)\
@@ -243,4 +242,4 @@ def lay_ds_tin_nhan(id_nhom,id_nguoi_dung):
 
 if __name__ == "__main__":
     with app.app_context():
-        print(lay_ds_nhom_chua_nhan(2,1))
+        pass
