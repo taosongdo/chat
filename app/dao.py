@@ -1,6 +1,6 @@
 from app.models import TinNhan,NguoiDung,Nhom,ThuocNhom,NguoiDung_TinNhan
 from sqlalchemy.orm import aliased
-from sqlalchemy import or_,and_
+from sqlalchemy import or_,and_,func
 import hashlib 
 from datetime import datetime
 from app import db,app
@@ -63,24 +63,39 @@ def lay_ds_nhom(id_nguoi_dung):
     return ds_nhom_chat_2
 
 def tao_nhom_moi(id_nguoi_dung_1,id_nguoi_dung_2):
-    try:
-        nguoi_dung_1 = NguoiDung.query.filter(NguoiDung.id_nguoi_dung == id_nguoi_dung_1).first()
-        nguoi_dung_2 = NguoiDung.query.filter(NguoiDung.id_nguoi_dung == id_nguoi_dung_2).first()
+        nguoi_dung_1 = aliased(NguoiDung)
+        thuoc_nhom_1 = aliased(ThuocNhom)
 
-        nhom = Nhom(ten_nhom = nguoi_dung_1.tai_khoan+"_"+nguoi_dung_2.tai_khoan)
-        db.session.add(nhom)
-        db.session.commit()
+        nguoi_dung_2 = aliased(NguoiDung)
+        thuoc_nhom_2 = aliased(ThuocNhom)
 
-        thuoc_nhom_1 = ThuocNhom(id_nguoi_dung = id_nguoi_dung_1, id_nhom = nhom.id_nhom)
-        thuoc_nhom_2 = ThuocNhom(id_nguoi_dung = id_nguoi_dung_2, id_nhom = nhom.id_nhom)
-        db.session.add(thuoc_nhom_1)
-        db.session.add(thuoc_nhom_2)
+        nhom = db.session.query(Nhom.id_nhom, func.count(ThuocNhom.id_nhom))\
+        .join(ThuocNhom,ThuocNhom.id_nhom == Nhom.id_nhom)\
+        .join(thuoc_nhom_1,Nhom.id_nhom == thuoc_nhom_1.id_nhom)\
+        .join(nguoi_dung_1,nguoi_dung_1.id_nguoi_dung ==  thuoc_nhom_1.id_nguoi_dung)\
+        .join(thuoc_nhom_2,Nhom.id_nhom == thuoc_nhom_2.id_nhom)\
+        .join(nguoi_dung_2,nguoi_dung_2.id_nguoi_dung ==  thuoc_nhom_2.id_nguoi_dung)\
+        .filter(nguoi_dung_1.id_nguoi_dung != nguoi_dung_2.id_nguoi_dung)\
+        .filter(nguoi_dung_1.id_nguoi_dung == id_nguoi_dung_1)\
+        .filter(nguoi_dung_2.id_nguoi_dung == id_nguoi_dung_2)\
+        .group_by(Nhom.id_nhom)\
+        .first()
 
-        db.session.commit()
-    except:
-        db.session.rollback()
-        nhom = Nhom.query.filter(Nhom.ten_nhom == nguoi_dung_1.ten_nguoi_dung+"_"+nguoi_dung_2.ten_nguoi_dung).first()
-    finally:
+        if not(nhom and nhom[1]==2):
+            nguoi_dung_1 = NguoiDung.query.filter(NguoiDung.id_nguoi_dung == id_nguoi_dung_1).first()
+            nguoi_dung_2 = NguoiDung.query.filter(NguoiDung.id_nguoi_dung == id_nguoi_dung_2).first()
+
+            nhom = Nhom(ten_nhom = nguoi_dung_1.tai_khoan+"_"+nguoi_dung_2.tai_khoan)
+            db.session.add(nhom)
+            db.session.commit()
+
+            thuoc_nhom_1 = ThuocNhom(id_nguoi_dung = id_nguoi_dung_1, id_nhom = nhom.id_nhom)
+            thuoc_nhom_2 = ThuocNhom(id_nguoi_dung = id_nguoi_dung_2, id_nhom = nhom.id_nhom)
+            db.session.add(thuoc_nhom_1)
+            db.session.add(thuoc_nhom_2)
+
+            db.session.commit()
+  
         ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == nhom.id_nhom).all()
         ds_tin_nhan_2 =[]
         for tin_nhan in ds_tin_nhan:
@@ -159,6 +174,7 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     .all()
 
     ds_nhom_chat_2=[]
+
     for nhom_chat in ds_nhom_chat:
         thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.thoi_gian_nhan)\
         .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
@@ -166,7 +182,7 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
         .filter(NguoiDung_TinNhan.thoi_gian_nhan == None)\
         .filter(nhom_chat.id_nhom == TinNhan.id_nhom)\
         .order_by(TinNhan.id_tin_nhan.desc()).first()
-
+        
         if thong_tin_khac:
             ds_nhom_chat_2.append({
                 "kiem_tra": nhom_chat.id_nguoi_dung == id_nguoi_dung,
@@ -177,10 +193,13 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
                 "thoi_gian_nhan" : thong_tin_khac[1]
             })
 
-        ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.thoi_gian_nhan==None).all()
-        for nguoidung_tinnhan in ds_nguoidung_tinnhan:
-            nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
-        
+
+    ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.thoi_gian_nhan==None).all()
+    for nguoidung_tinnhan in ds_nguoidung_tinnhan:
+        nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
+
+    print(ds_nhom_chat_2)
+
     ds_nguoidung_tinnhan = db.session.query(NguoiDung_TinNhan)\
     .join(NguoiDung,NguoiDung_TinNhan.id_nguoi_dung == NguoiDung.id_nguoi_dung)\
     .join(TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan)\
@@ -189,6 +208,8 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     .filter(NguoiDung_TinNhan.thoi_gian_xem == None)\
     .filter(NguoiDung.id_nguoi_dung == id_nguoi_dung)\
     .all()
+
+
 
     for nguoidung_tinnhan in ds_nguoidung_tinnhan:
         nguoidung_tinnhan.thoi_gian_xem = datetime.now()
@@ -222,4 +243,4 @@ def lay_ds_tin_nhan(id_nhom,id_nguoi_dung):
 
 if __name__ == "__main__":
     with app.app_context():
-        lay_ds_nhom_chua_nhan(2)
+        print(lay_ds_nhom_chua_nhan(2,1))

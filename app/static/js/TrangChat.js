@@ -145,10 +145,16 @@ const taoNhom = (id_nguoi_dung) => {
     }).then(res => res.json()).then(data => {
         var divThanhTimKiemIcon = document.getElementById("idDivThanhTimKiemIcon")
         divThanhTimKiemIcon.classList.remove("div-thanh-tim-kiem-icon-2")
+
         var divDsKetQua = document.getElementById("idDivDsKetQua")
         divDsKetQua.classList.remove("div-ds-ket-qua-2")
-        var inputThanhTimKiem = document.getElementById("idInputThanhTimKiem")
+        
+        var divNhapLieuNutGui = document.getElementById("idDivNhapLieuNutGui")
+        divNhapLieuNutGui.classList.remove("div-nhap-lieu-nut-gui-2")
 
+        idNhomHienThi = data.nhom.id_nhom
+
+        var inputThanhTimKiem = document.getElementById("idInputThanhTimKiem")
 
         divDsNhom = document.getElementById("idDivDsNhomChat")
         divNhom = document.getElementById(`idDivNhomTinNhan${data.id_nhom}`)
@@ -194,8 +200,6 @@ const taoNhom = (id_nguoi_dung) => {
             `
             divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
 
-            var divNhapLieuNutGui = document.querySelector(`#idDivNhomTinNhan${idNhomHienThi} .div-thong-tin-nhom-tin-nhan`)
-            divNhapLieuNutGui.classList.remove("div-thong-tin-nhom-tin-nhan-2")
         }
     })
 
@@ -330,7 +334,7 @@ const layDuLieuTheoThoiGian = () => {
                 "Content-type": "application/json"
             }
         }).then(res => res.json()).then(dsNhom => {
-
+            console.log(dsNhom)
             divDsNhom = document.getElementById("idDivDsNhomChat")
             dsNhom2 = ``
             for (nhom of dsNhom) {

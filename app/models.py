@@ -19,7 +19,7 @@ class NguoiDung(db.Model, UserMixin):
 class Nhom(db.Model):
     __tablename__ = "nhom"
     id_nhom = Column(Integer,primary_key=True,autoincrement=True)
-    ten_nhom = Column(String(50),unique=True)
+    ten_nhom = Column(String(50))
     hinh_anh = Column(String(50))
 
 class TinNhan(db.Model):
