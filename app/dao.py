@@ -39,24 +39,26 @@ def lay_ds_nhom(id_nguoi_dung):
     ds_nhom_chat_2 = []
 
     for nhom_chat in ds_nhom_chat:
-        thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.thoi_gian_xem)\
+        thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.thoi_gian_xem,NguoiDung.id_nguoi_dung)\
         .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
+        .join(NguoiDung,TinNhan.id_nguoi_dung == NguoiDung.id_nguoi_dung)\
         .filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung)\
         .filter(nhom_chat.id_nhom == TinNhan.id_nhom)\
         .order_by(TinNhan.id_tin_nhan.desc()).first()
-
+        
         ds_nhom_chat_2.append({
             "id_nhom": nhom_chat.id_nhom,
             "ten_nguoi_dung": nhom_chat.ten_nguoi_dung,
             "hinh_anh": nhom_chat.hinh_anh,
-            "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn" ,
+            "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn",
+            "kiem_tra": thong_tin_khac[2] == id_nguoi_dung,
             "thoi_gian_xem" : thong_tin_khac[1].strftime("%Y-%m-%d %H:%M:%S") if thong_tin_khac and thong_tin_khac[1] else None
         })
 
-        ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.thoi_gian_nhan==None).all()
+    ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.thoi_gian_nhan==None).all()
 
-        for nguoidung_tinnhan in ds_nguoidung_tinnhan:
-            nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
+    for nguoidung_tinnhan in ds_nguoidung_tinnhan:
+        nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
         
     db.session.commit()
 
@@ -96,7 +98,8 @@ def tao_nhom_moi(id_nguoi_dung_1,id_nguoi_dung_2):
 
             db.session.commit()
   
-        ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == nhom.id_nhom).all()
+        ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == nhom.id_nhom).order_by(TinNhan.id_tin_nhan.desc()).limit(30).all()
+        ds_tin_nhan = list(reversed(ds_tin_nhan))
         ds_tin_nhan_2 =[]
         for tin_nhan in ds_tin_nhan:
             ds_tin_nhan_2.append({"noi_dung": tin_nhan.noi_dung,
@@ -122,7 +125,7 @@ def lay_nhom(id_nhom,id_nguoi_dung):
     .filter(Nhom.id_nhom == id_nhom)\
     .first()
 
-    thong_tin_khac = db.session.query(TinNhan.noi_dung)\
+    thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.id_nguoi_dung)\
     .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
     .filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung)\
     .filter(nhom_chat.id_nhom == TinNhan.id_nhom)\
@@ -132,7 +135,8 @@ def lay_nhom(id_nhom,id_nguoi_dung):
     nhom_chat_2 = {"id_nhom":nhom_chat.id_nhom,
                    "ten_nguoi_dung":nhom_chat.ten_nguoi_dung,
                    "hinh_anh": nhom_chat.hinh_anh,
-                   "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn nào"}
+                    "noi_dung": "bạn: "+thong_tin_khac[0] if thong_tin_khac[1] == id_nguoi_dung else thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn" ,
+}
     return nhom_chat_2
 
 def tao_tin_nhan_moi(id_nhom,noi_dung,id_nguoi_dung):
@@ -218,7 +222,8 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     return ds_nhom_chat_2
 
 def lay_ds_tin_nhan(id_nhom,id_nguoi_dung):
-    ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == id_nhom).all()
+    ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == id_nhom).order_by(TinNhan.id_tin_nhan.desc()).limit(30).all()
+    ds_tin_nhan = list(reversed(ds_tin_nhan))
     ds_tin_nhan_2 =[]
     for tin_nhan in ds_tin_nhan:
         ds_tin_nhan_2.append({"noi_dung": tin_nhan.noi_dung,

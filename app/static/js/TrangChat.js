@@ -7,11 +7,10 @@ var idNhomHienThi
 
 const layDuLieu = (tinNhan) => {
     tinNhan2 = ""
-
     if (tinNhan.includes("https://")) {
-        console.log("gg")
         tinNhan = `<a href="${tinNhan}}">${tinNhan}</a>`
     }
+
     while (20 < tinNhan.length) {
         tinNhanTruoc = tinNhan.substring(0, 20)
         viTri = tinNhanTruoc.lastIndexOf(" ") === -1 ? 20 : tinNhanTruoc.lastIndexOf(" ")
@@ -28,7 +27,10 @@ const layDuLieu = (tinNhan) => {
     return tinNhan2
 }
 
-const catNganDuLieu = (tinNhan) => {
+const catNganDuLieu = (tinNhan, kiemTra) => {
+    if (kiemTra) {
+        tinNhan = "bạn: " + tinNhan
+    }
     if (tinNhan.length > 20) {
         tinNhan = tinNhan.substring(0, 17) + "..."
     }
@@ -106,7 +108,7 @@ const loadNhomTinNhan = () => {
                             </div>
                             <div class="div-thong-tin-nhom-tin-nhan div-thong-tin-nhom-tin-nhan-2">
                                 <h3 class="h1-ten-nhom-tin-nhan">${nhomChat.ten_nguoi_dung}</h3>
-                                <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhomChat.noi_dung)}</div>
+                                <div class="div-tin-nhan-nhom-tin-nhan">${(nhomChat.kiem_tra ? "bạn: " : " ") + catNganDuLieu(nhomChat.noi_dung)}</div>
                             </div>
                         </button>
                     </div>  
@@ -123,7 +125,7 @@ const loadNhomTinNhan = () => {
                             </div>
                             <div class="div-thong-tin-nhom-tin-nhan">
                                 <h3 class="h1-ten-nhom-tin-nhan">${nhomChat.ten_nguoi_dung}</h3>
-                                <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhomChat.noi_dung)}</div>
+                                <div class="div-tin-nhan-nhom-tin-nhan">${(nhomChat.kiem_tra ? "bạn: " : " ") + catNganDuLieu(nhomChat.noi_dung)}</div>
                             </div>
                         </button>
                     </div>  
@@ -133,7 +135,7 @@ const loadNhomTinNhan = () => {
     })
 }
 
-const taoNhom = (id_nguoi_dung,hinh_anh) => {
+const taoNhom = (id_nguoi_dung, hinh_anh) => {
     fetch("/api/TaoNhomMoi", {
         "method": "POST",
         "body": JSON.stringify({
@@ -148,7 +150,7 @@ const taoNhom = (id_nguoi_dung,hinh_anh) => {
 
         var divDsKetQua = document.getElementById("idDivDsKetQua")
         divDsKetQua.classList.remove("div-ds-ket-qua-2")
-        
+
         var divNhapLieuNutGui = document.getElementById("idDivNhapLieuNutGui")
         divNhapLieuNutGui.classList.remove("div-nhap-lieu-nut-gui-2")
 
@@ -209,7 +211,7 @@ const taoNhom = (id_nguoi_dung,hinh_anh) => {
                 </div>
                 <h1 class="div-ten-nhom-tin-nhan-chon">${data.nhom.ten_nguoi_dung}</h1>
                 `
-            
+
         if (window.innerWidth < 768) {
             var divNhomTinNhanChon = document.getElementById("idDivNhomTinNhanChon")
             var divDsBan = document.getElementById("idDivDsBan")
@@ -283,7 +285,7 @@ const chonNhom = (idNhom, tenNguoiDung, hinhAnh) => {
 
 const gui = () => {
     var inputNhapLieu = document.getElementById("idInputNhapLieu")
-    if (inputNhapLieu != "") {
+    if (inputNhapLieu.value.trim() != "") {
 
         fetch("/api/TaoTinNhanMoi", {
             "method": "POST",
@@ -349,6 +351,10 @@ const layDuLieuTheoThoiGian = () => {
                 "Content-type": "application/json"
             }
         }).then(res => res.json()).then(dsNhom => {
+
+            if (dsNhom.length != 0) {
+                console.log(dsNhom)
+            }
             divDsNhom = document.getElementById("idDivDsNhomChat")
             dsNhom2 = ``
             for (nhom of dsNhom) {
@@ -408,7 +414,7 @@ const layDuLieuTheoThoiGian = () => {
                 divDsNhom.innerHTML = dsNhom2 + divDsNhom.innerHTML
             }
         })
-    }, 2000)
+    }, 1000)
 }
 
 window.onload = async () => {
