@@ -102,8 +102,10 @@ def tao_nhom_moi(id_nguoi_dung_1,id_nguoi_dung_2):
         ds_tin_nhan = list(reversed(ds_tin_nhan))
         ds_tin_nhan_2 =[]
         for tin_nhan in ds_tin_nhan:
-            ds_tin_nhan_2.append({"noi_dung": tin_nhan.noi_dung,
-                              "kiem_tra": tin_nhan.id_nguoi_dung == id_nguoi_dung_2})
+            ds_tin_nhan_2.append({
+                                    "noi_dung": tin_nhan.noi_dung,
+                                    "kiem_tra": tin_nhan.id_nguoi_dung == id_nguoi_dung_2
+                                })
         
         return {"nhom":lay_nhom(id_nhom=nhom.id_nhom,id_nguoi_dung=id_nguoi_dung_2),
                 "ds_tin_nhan": ds_tin_nhan_2}
@@ -125,17 +127,18 @@ def lay_nhom(id_nhom,id_nguoi_dung):
     .filter(Nhom.id_nhom == id_nhom)\
     .first()
 
-    thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.id_nguoi_dung)\
-    .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
-    .filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung)\
+    thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung.id_nguoi_dung)\
+    .join(NguoiDung,NguoiDung.id_nguoi_dung == TinNhan.id_nguoi_dung,isouter=True)\
     .filter(nhom_chat.id_nhom == TinNhan.id_nhom)\
     .order_by(TinNhan.id_tin_nhan.desc()).first()
 
     db.session.commit()
-    nhom_chat_2 = {"id_nhom":nhom_chat.id_nhom,
-                   "ten_nguoi_dung":nhom_chat.ten_nguoi_dung,
-                   "hinh_anh": nhom_chat.hinh_anh,
-                    "noi_dung": "bạn: "+thong_tin_khac[0] if thong_tin_khac[1] == id_nguoi_dung else thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn" ,
+    nhom_chat_2 = {
+                    "id_nhom":nhom_chat.id_nhom,
+                    "ten_nguoi_dung":nhom_chat.ten_nguoi_dung,
+                    "hinh_anh": nhom_chat.hinh_anh,
+                    "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn" ,
+                    "kiem_tra": thong_tin_khac[1] == id_nguoi_dung,
 }
     return nhom_chat_2
 

@@ -31,9 +31,10 @@ const catNganDuLieu = (tinNhan, kiemTra) => {
     if (kiemTra) {
         tinNhan = "bạn: " + tinNhan
     }
-    if (tinNhan.length > 20) {
-        tinNhan = tinNhan.substring(0, 17) + "..."
+    if (tinNhan.length > 15) {
+        tinNhan = tinNhan.substring(0, 15) + "..."
     }
+
     return tinNhan
 }
 
@@ -108,7 +109,7 @@ const loadNhomTinNhan = () => {
                             </div>
                             <div class="div-thong-tin-nhom-tin-nhan div-thong-tin-nhom-tin-nhan-2">
                                 <h3 class="h1-ten-nhom-tin-nhan">${nhomChat.ten_nguoi_dung}</h3>
-                                <div class="div-tin-nhan-nhom-tin-nhan">${(nhomChat.kiem_tra ? "bạn: " : " ") + catNganDuLieu(nhomChat.noi_dung)}</div>
+                                <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhomChat.noi_dung, nhomChat.kiem_tra)}</div>
                             </div>
                         </button>
                     </div>  
@@ -125,7 +126,7 @@ const loadNhomTinNhan = () => {
                             </div>
                             <div class="div-thong-tin-nhom-tin-nhan">
                                 <h3 class="h1-ten-nhom-tin-nhan">${nhomChat.ten_nguoi_dung}</h3>
-                                <div class="div-tin-nhan-nhom-tin-nhan">${(nhomChat.kiem_tra ? "bạn: " : " ") + catNganDuLieu(nhomChat.noi_dung)}</div>
+                                <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhomChat.noi_dung, nhomChat.kiem_tra)}</div>
                             </div>
                         </button>
                     </div>  
@@ -159,14 +160,11 @@ const taoNhom = (id_nguoi_dung, hinh_anh) => {
         var inputThanhTimKiem = document.getElementById("idInputThanhTimKiem")
 
         divDsNhom = document.getElementById("idDivDsNhomChat")
-        divNhom = document.getElementById(`idDivNhomTinNhan${data.id_nhom}`)
+        divNhom = document.getElementById(`idDivNhomTinNhan${data.nhom.id_nhom}`)
         if (divNhom) {
             divDsNhom.removeChild(divNhom)
-        }
+        } 
 
-        divDsNhom = document.getElementById("idDivDsNhomChat")
-        divNhom = document.getElementById(`idDivNhomTinNhan${data.nhom.id_nhom}`)
-        divDsNhom.removeChild(divNhom)
         divDsNhom.innerHTML =
             `
             <div class="div-nhom-tin-nhan" id = "idDivNhomTinNhan${data.nhom.id_nhom}">
@@ -176,7 +174,7 @@ const taoNhom = (id_nguoi_dung, hinh_anh) => {
                     </div>
                     <div class="div-thong-tin-nhom-tin-nhan">
                         <h3 class="h1-ten-nhom-tin-nhan">${data.nhom.ten_nguoi_dung}</h3>
-                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.nhom.noi_dung)}</div>
+                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.nhom.noi_dung, data.nhom.kiem_tra)}</div>
                     </div>
                 </button>
             </div>
@@ -321,7 +319,7 @@ const gui = () => {
                         </div>
                         <div class="div-thong-tin-nhom-tin-nhan">
                             <h3 class="h1-ten-nhom-tin-nhan">${data.ten_nguoi_dung}</h3>
-                            <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.noi_dung)}</div>
+                            <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.noi_dung, data.kiem_tra)}</div>
                         </div>
                     </button>
                 </div>
@@ -372,7 +370,7 @@ const layDuLieuTheoThoiGian = () => {
                                     </div>
                                     <div class="div-thong-tin-nhom-tin-nhan div-thong-tin-nhom-tin-nhan-2">
                                         <h3 class="h1-ten-nhom-tin-nhan">${nhom.ten_nguoi_dung}</h3>
-                                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhom.noi_dung)}</div>
+                                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhom.noi_dung, nhom.kiem_tra)}</div>
                                     </div>
                                 </button>
                             </div>
@@ -389,7 +387,7 @@ const layDuLieuTheoThoiGian = () => {
                                     </div>
                                     <div class="div-thong-tin-nhom-tin-nhan">
                                         <h3 class="h1-ten-nhom-tin-nhan">${nhom.ten_nguoi_dung}</h3>
-                                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhom.noi_dung)}</div>
+                                        <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(nhom.noi_dung, nhom.kiem_tra)}</div>
                                     </div>
                                 </button>
                             </div>
@@ -403,7 +401,7 @@ const layDuLieuTheoThoiGian = () => {
                         `
                             <div class="div-tin-nhan-${clas}">
                                 <div class="div-block-${clas}">
-                                    ${nhom.noi_dung}
+                                    ${layDuLieu(nhom.noi_dung)}
                                 </div>
                             </div>
                         `

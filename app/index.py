@@ -52,6 +52,7 @@ def tao_tin_nhan_moi():
 def tao_nhom_moi():
     id_nguoi_dung = request.json.get("id_nguoi_dung")
     ket_qua = dao.tao_nhom_moi(id_nguoi_dung_1=id_nguoi_dung,id_nguoi_dung_2=current_user.id_nguoi_dung)
+    print(ket_qua)
     return jsonify(ket_qua)
 
 @app.route("/api/LayDuLieuTheoThoiGian",methods=["POST"])
