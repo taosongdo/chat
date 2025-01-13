@@ -39,6 +39,7 @@ def lay_ds_tim_kiem():
 @app.route("/api/LayDsNhomChat",methods=["POST"])
 def lay_ds_nhom_chat():
     ds_nhom_chat = dao.lay_ds_nhom(id_nguoi_dung=current_user.id_nguoi_dung)
+    print(ds_nhom_chat)
     return jsonify(ds_nhom_chat)
 
 @app.route("/api/TaoTinNhanMoi",methods=["POST"])

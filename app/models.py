@@ -44,8 +44,8 @@ class NguoiDung_TinNhan(db.Model):
     id_nguoi_dung_tin_nhan = Column(Integer,primary_key=True,autoincrement=True)
     id_nguoi_dung = Column(Integer,ForeignKey("nguoidung.id_nguoi_dung"),nullable=False)
     id_tin_nhan = Column(Integer,ForeignKey("tinnhan.id_tin_nhan"),nullable=False)
-    thoi_gian_nhan = Column(DateTime)
-    thoi_gian_xem = Column(DateTime)
+    da_nhan = Column(Boolean,nullable=False)
+    da_xem = Column(Boolean,nullable=False)
     __table_args__=(
         UniqueConstraint("id_nguoi_dung","id_tin_nhan",name="unix_nguoi_dung_tin_nhan"),
     )

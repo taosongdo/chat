@@ -39,7 +39,7 @@ def lay_ds_nhom(id_nguoi_dung):
     ds_nhom_chat_2 = []
 
     for nhom_chat in ds_nhom_chat:
-        thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.thoi_gian_xem,NguoiDung.id_nguoi_dung)\
+        thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.da_xem,NguoiDung.id_nguoi_dung)\
         .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
         .join(NguoiDung,TinNhan.id_nguoi_dung == NguoiDung.id_nguoi_dung)\
         .filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung)\
@@ -52,13 +52,13 @@ def lay_ds_nhom(id_nguoi_dung):
             "hinh_anh": nhom_chat.hinh_anh,
             "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn",
             "kiem_tra": thong_tin_khac[2] == id_nguoi_dung if thong_tin_khac else False,
-            "thoi_gian_xem" : thong_tin_khac[1].strftime("%Y-%m-%d %H:%M:%S") if thong_tin_khac and thong_tin_khac[1] else None
+            "da_xem" : thong_tin_khac[1] if thong_tin_khac else False
         })
 
-    ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.thoi_gian_nhan==None).all()
+    ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.da_nhan==False).all()
 
     for nguoidung_tinnhan in ds_nguoidung_tinnhan:
-        nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
+        nguoidung_tinnhan.da_nhan = True
         
     db.session.commit()
 
@@ -100,6 +100,7 @@ def tao_nhom_moi(id_nguoi_dung_1,id_nguoi_dung_2):
   
         ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == nhom.id_nhom).order_by(TinNhan.id_tin_nhan.desc()).limit(30).all()
         ds_tin_nhan = list(reversed(ds_tin_nhan))
+
         ds_tin_nhan_2 =[]
         for tin_nhan in ds_tin_nhan:
             ds_tin_nhan_2.append({
@@ -153,9 +154,9 @@ def tao_tin_nhan_moi(id_nhom,noi_dung,id_nguoi_dung):
 
     for nguoi_dung in ds_nguoi_dung:
         if nguoi_dung.id_nguoi_dung == id_nguoi_dung:
-            nguoidung_tinnhan = NguoiDung_TinNhan(id_nguoi_dung=nguoi_dung.id_nguoi_dung,id_tin_nhan=tin_nhan.id_tin_nhan,thoi_gian_xem=datetime.now(),thoi_gian_nhan=datetime.now())
+            nguoidung_tinnhan = NguoiDung_TinNhan(id_nguoi_dung=nguoi_dung.id_nguoi_dung,id_tin_nhan=tin_nhan.id_tin_nhan,da_xem=True,da_nhan=True)
         else:
-            nguoidung_tinnhan = NguoiDung_TinNhan(id_nguoi_dung=nguoi_dung.id_nguoi_dung,id_tin_nhan=tin_nhan.id_tin_nhan)           
+            nguoidung_tinnhan = NguoiDung_TinNhan(id_nguoi_dung=nguoi_dung.id_nguoi_dung,id_tin_nhan=tin_nhan.id_tin_nhan,da_xem=False,da_nhan=False)           
         db.session.add(nguoidung_tinnhan)
     db.session.commit()
 
@@ -183,10 +184,10 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     ds_nhom_chat_2=[]
 
     for nhom_chat in ds_nhom_chat:
-        thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.thoi_gian_nhan)\
+        thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan.da_nhan)\
         .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
         .filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung)\
-        .filter(NguoiDung_TinNhan.thoi_gian_nhan == None)\
+        .filter(NguoiDung_TinNhan.da_nhan == False)\
         .filter(nhom_chat.id_nhom == TinNhan.id_nhom)\
         .order_by(TinNhan.id_tin_nhan.desc()).first()
         
@@ -197,13 +198,13 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
                 "ten_nguoi_dung": nhom_chat.ten_nguoi_dung,
                 "hinh_anh": nhom_chat.hinh_anh,
                 "noi_dung": thong_tin_khac[0],
-                "thoi_gian_nhan" : thong_tin_khac[1]
+                "da_nhan" : thong_tin_khac[1]
             })
 
 
-    ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.thoi_gian_nhan==None).all()
+    ds_nguoidung_tinnhan = NguoiDung_TinNhan.query.filter(NguoiDung_TinNhan.id_nguoi_dung == id_nguoi_dung,NguoiDung_TinNhan.da_nhan==False).all()
     for nguoidung_tinnhan in ds_nguoidung_tinnhan:
-        nguoidung_tinnhan.thoi_gian_nhan = datetime.now()
+        nguoidung_tinnhan.da_nhan = True
 
 
     ds_nguoidung_tinnhan = db.session.query(NguoiDung_TinNhan)\
@@ -211,14 +212,14 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     .join(TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan)\
     .join(Nhom,Nhom.id_nhom == TinNhan.id_nhom)\
     .filter(Nhom.id_nhom == id_nhom)\
-    .filter(NguoiDung_TinNhan.thoi_gian_xem == None)\
+    .filter(NguoiDung_TinNhan.da_xem == None)\
     .filter(NguoiDung.id_nguoi_dung == id_nguoi_dung)\
     .all()
 
 
 
     for nguoidung_tinnhan in ds_nguoidung_tinnhan:
-        nguoidung_tinnhan.thoi_gian_xem = datetime.now()
+        nguoidung_tinnhan.da_xem = True
 
     db.session.commit()
 
@@ -237,12 +238,12 @@ def lay_ds_tin_nhan(id_nhom,id_nguoi_dung):
     .join(TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan)\
     .join(Nhom,Nhom.id_nhom == TinNhan.id_nhom)\
     .filter(Nhom.id_nhom == id_nhom)\
-    .filter(NguoiDung_TinNhan.thoi_gian_xem == None)\
+    .filter(NguoiDung_TinNhan.da_xem == False)\
     .filter(NguoiDung.id_nguoi_dung == id_nguoi_dung)\
     .all()
 
     for nguoidung_tinnhan in ds_nguoidung_tinnhan:
-        nguoidung_tinnhan.thoi_gian_xem = datetime.now()
+        nguoidung_tinnhan.da_xem = True
     db.session.commit()
 
     return ds_tin_nhan_2

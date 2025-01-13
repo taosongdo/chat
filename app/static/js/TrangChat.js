@@ -97,9 +97,10 @@ const loadNhomTinNhan = () => {
             "Content-type": "application-json"
         }
     }).then(res => res.json()).then(dsNhomChat => {
+        console.log(dsNhomChat)
         for (nhomChat of dsNhomChat) {
 
-            if (nhomChat.thoi_gian_xem == null) {
+            if (!nhomChat.da_xem) {
                 divDsNhomChat.innerHTML =
                     `
                     <div class="div-nhom-tin-nhan" id="idDivNhomTinNhan${nhomChat.id_nhom}">
