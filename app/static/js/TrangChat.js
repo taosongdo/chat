@@ -301,7 +301,7 @@ const gui = () => {
                 `
             <div class="div-tin-nhan-phai" >
                 <div class="div-block-phai">
-                    ${layDuLieu(inputNhapLieu.value)}
+                    ${layDuLieu(data.noi_dung)}
                 </div>
             </div >
             `
