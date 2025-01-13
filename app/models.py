@@ -1,5 +1,5 @@
 from app import db, app
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, UniqueConstraint, Enum, Time, DECIMAL
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, UniqueConstraint, Enum, Time, DECIMAL, Text
 from sqlalchemy.orm import relationship, backref
 import hashlib
 from flask_login import UserMixin
@@ -27,7 +27,7 @@ class TinNhan(db.Model):
     id_tin_nhan = Column(Integer,primary_key=True,autoincrement=True)
     id_nguoi_dung = Column(Integer,ForeignKey("nguoidung.id_nguoi_dung"),nullable=False)
     id_nhom = Column(Integer,ForeignKey("nhom.id_nhom"),nullable=False)
-    noi_dung = Column(String(255),nullable=False)
+    noi_dung = Column(Text,nullable=False)
     thoi_gian = Column(DateTime,nullable=False)
 
 class ThuocNhom(db.Model):

@@ -350,11 +350,9 @@ const layDuLieuTheoThoiGian = () => {
             }
         }).then(res => res.json()).then(dsNhom => {
 
-            if (dsNhom.length != 0) {
-                console.log(dsNhom)
-            }
             divDsNhom = document.getElementById("idDivDsNhomChat")
             dsNhom2 = ``
+            
             for (nhom of dsNhom) {
 
                 divNhom = document.getElementById(`idDivNhomTinNhan${nhom.id_nhom}`)

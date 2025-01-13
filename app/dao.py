@@ -51,7 +51,7 @@ def lay_ds_nhom(id_nguoi_dung):
             "ten_nguoi_dung": nhom_chat.ten_nguoi_dung,
             "hinh_anh": nhom_chat.hinh_anh,
             "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn",
-            "kiem_tra": thong_tin_khac[2] == id_nguoi_dung,
+            "kiem_tra": thong_tin_khac[2] == id_nguoi_dung if thong_tin_khac else False,
             "thoi_gian_xem" : thong_tin_khac[1].strftime("%Y-%m-%d %H:%M:%S") if thong_tin_khac and thong_tin_khac[1] else None
         })
 
@@ -138,8 +138,8 @@ def lay_nhom(id_nhom,id_nguoi_dung):
                     "ten_nguoi_dung":nhom_chat.ten_nguoi_dung,
                     "hinh_anh": nhom_chat.hinh_anh,
                     "noi_dung": thong_tin_khac[0] if thong_tin_khac else "chưa có tin nhắn" ,
-                    "kiem_tra": thong_tin_khac[1] == id_nguoi_dung,
-}
+                    "kiem_tra": thong_tin_khac[1] == id_nguoi_dung if thong_tin_khac else False ,
+    }
     return nhom_chat_2
 
 def tao_tin_nhan_moi(id_nhom,noi_dung,id_nguoi_dung):

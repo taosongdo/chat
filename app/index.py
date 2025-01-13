@@ -52,15 +52,12 @@ def tao_tin_nhan_moi():
 def tao_nhom_moi():
     id_nguoi_dung = request.json.get("id_nguoi_dung")
     ket_qua = dao.tao_nhom_moi(id_nguoi_dung_1=id_nguoi_dung,id_nguoi_dung_2=current_user.id_nguoi_dung)
-    print(ket_qua)
     return jsonify(ket_qua)
 
 @app.route("/api/LayDuLieuTheoThoiGian",methods=["POST"])
 def lay_du_lieu_theo_thoi_gian():
     id_nhom = request.json.get("id_nhom")
     ds_nhom_chua_nhan = dao.lay_ds_nhom_chua_nhan(id_nguoi_dung=current_user.id_nguoi_dung,id_nhom=id_nhom)
-    if len(ds_nhom_chua_nhan) != 0:
-        print(ds_nhom_chua_nhan)
     return jsonify(ds_nhom_chua_nhan)
 
 @app.route("/api/LayDsTinNhan",methods=["POST"])
