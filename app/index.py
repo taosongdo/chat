@@ -10,7 +10,7 @@ from flask_login import login_user,current_user,login_required
 def load_user(id_nguoi_dung):
     return NguoiDung.query.filter(NguoiDung.id_nguoi_dung==id_nguoi_dung).first()
 
-@app.route("/", methods=["POST","GET"])
+@app.route("/DangNhap", methods=["POST","GET"])
 def dang_nhap():
     if not(current_user.is_authenticated):
         err = None
@@ -68,7 +68,7 @@ def dang_ky():
         elif buoc == 4:
             hinh_anh = request.files.get("hinh_anh")
             dao.sua_nguoi_dung(id_nguoi_dung=session['id_nguoi_dung'],hinh_anh=hinh_anh)
-            return redirect("/")
+            return redirect("/DangNhap")
     return render_template("TrangDangKy.html",buoc=buoc,err=err)
         
 #api
