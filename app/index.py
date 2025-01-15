@@ -41,7 +41,7 @@ def dang_ky():
                 nguoi_dung = dao.kiem_tra_thong_tin(ten_nguoi_dung,tai_khoan,email,mat_khau)
                 if nguoi_dung:
                     buoc = 1
-                    err = "thông tin đã đc dùng để tạo tài khoản hoặc thông tin ko hợp lệ"
+                    err = "thông tin đã đc dùng để tạo tài khoản hoặc thông tin không hợp lệ"
                 else:
                     xac_nhan_mat_khau = request.form.get("xac_nhan_mat_khau")
                     if mat_khau != xac_nhan_mat_khau:

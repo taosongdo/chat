@@ -20,10 +20,11 @@ def sua_nguoi_dung(id_nguoi_dung,hinh_anh=None):
     
     db.session.commit()
     
-def kiem_tra_thong_tin(tai_khoan,ten_nguoi_dung,gmail,mat_khau):
+def kiem_tra_thong_tin(tai_khoan,ten_nguoi_dung,email,mat_khau):
     if re.match(r'^[A-Za-z0-9!@#$%^&*()_+={}\[\]:;"\'<>,.?/\\|`~-]+$', tai_khoan) and re.match(r'^[A-Za-z0-9!@#$%^&*()_+={}\[\]:;"\'<>,.?/\\|`~-]+$', mat_khau):
-        return NguoiDung.query.filter(or_(NguoiDung.tai_khoan == tai_khoan,NguoiDung.ten_nguoi_dung == ten_nguoi_dung,NguoiDung.gmail == gmail)).first()
-    return None
+        return True
+    return NguoiDung.query.filter(or_(NguoiDung.tai_khoan == tai_khoan,NguoiDung.ten_nguoi_dung == ten_nguoi_dung,NguoiDung.email == email)).first()
+
 
 
 def lay_nguoi_dung_dang_nhap(tai_khoan,mat_khau):
