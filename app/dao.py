@@ -23,7 +23,7 @@ def sua_nguoi_dung(id_nguoi_dung,hinh_anh=None):
 def kiem_tra_thong_tin(tai_khoan,ten_nguoi_dung,email,mat_khau):
     if re.match(r'^[A-Za-z0-9!@#$%^&*()_+={}\[\]:;"\'<>,.?/\\|`~-]+$', tai_khoan) and re.match(r'^[A-Za-z0-9!@#$%^&*()_+={}\[\]:;"\'<>,.?/\\|`~-]+$', mat_khau):
         return True
-    return NguoiDung.query.filter(or_(NguoiDung.tai_khoan == tai_khoan,NguoiDung.ten_nguoi_dung == ten_nguoi_dung,NguoiDung.email == email)).first()
+    return NguoiDung.query.filter(or_(NguoiDung.tai_khoan == tai_khoan,NguoiDung.email == email)).first()
 
 
 

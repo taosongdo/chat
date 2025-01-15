@@ -10,7 +10,7 @@ class NguoiDung(db.Model, UserMixin):
     id_nguoi_dung = Column(Integer,primary_key=True,autoincrement=True)
     tai_khoan = Column(String(50),nullable=False,unique=True)
     email = Column(String(50),nullable=False,unique=True)
-    ten_nguoi_dung = Column(String(50),nullable=False,unique=True)
+    ten_nguoi_dung = Column(String(50),nullable=False)
     mat_khau = Column(String(50),nullable=False)
     hinh_anh = Column(String(255),nullable=False)
 
