@@ -355,34 +355,5 @@ def lay_ds_tin_nhan(id_nhom,id_nguoi_dung,bat_dau=0):
 
 if __name__ == "__main__":
     with app.app_context():
-        id_nguoi_dung = 2
-        nguoi_dung_1 = aliased(NguoiDung)
-        thuoc_nhom_1 = aliased(ThuocNhom)
-
-        nguoi_dung_2 = aliased(NguoiDung)
-        thuoc_nhom_2 = aliased(ThuocNhom)
-
-
-        ds_nhom_chat = db.session.query(Nhom.id_nhom,nguoi_dung_2.id_nguoi_dung,nguoi_dung_2.ten_nguoi_dung,nguoi_dung_2.hinh_anh)\
-        .join(thuoc_nhom_1,Nhom.id_nhom == thuoc_nhom_1.id_nhom)\
-        .join(nguoi_dung_1,nguoi_dung_1.id_nguoi_dung ==  thuoc_nhom_1.id_nguoi_dung)\
-        .join(thuoc_nhom_2,Nhom.id_nhom == thuoc_nhom_2.id_nhom)\
-        .join(nguoi_dung_2,nguoi_dung_2.id_nguoi_dung ==  thuoc_nhom_2.id_nguoi_dung)\
-        .filter(nguoi_dung_1.id_nguoi_dung != nguoi_dung_2.id_nguoi_dung)\
-        .filter(nguoi_dung_1.id_nguoi_dung == id_nguoi_dung)\
-        .all()
-        
-        print(ds_nhom_chat)
-
-        ds_nhom_chat_2=[]
-
-        for nhom_chat in ds_nhom_chat:
-            thong_tin_khac = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan,TinNhan.id_tin_nhan)\
-            .join(NguoiDung_TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan,isouter=True)\
-            .filter(TinNhan.id_nguoi_dung == id_nguoi_dung)\
-            .filter(nhom_chat[0] == TinNhan.id_nhom)\
-            .order_by(TinNhan.id_tin_nhan.desc()).first() 
-            
-            print(thong_tin_khac)
-            
+        pass
 

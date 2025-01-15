@@ -53,10 +53,3 @@ class NguoiDung_TinNhan(db.Model):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        # Vinh_Tien = NguoiDung(tai_khoan="VinhTien",ten_nguoi_dung="Vĩnh Tiến",mat_khau=str(hashlib.md5('lkjhg09876'.encode('utf-8')).hexdigest()),hinh_anh="./static/Images/VinhTien.jpg",email="LyGiaTuan2008")
-        # Gia_Tuan = NguoiDung(tai_khoan="GiaTuan",ten_nguoi_dung="Gia Tuấn",mat_khau=str(hashlib.md5('lkjhg09876'.encode('utf-8')).hexdigest()),hinh_anh="./static/Images/GiaTuan.jpg")
-        # Tran_Nhu = NguoiDung(tai_khoan="TranNhu",ten_nguoi_dung="Trân Như",mat_khau=str(hashlib.md5('lkjhg09876'.encode('utf-8')).hexdigest()),hinh_anh="./static/Images/GiaTuan.jpg")
-        # db.session.add(Tran_Nhu)
-        # db.session.add(Gia_Tuan)
-        # db.session.add(Vinh_Tien)
-        # db.session.commit()
