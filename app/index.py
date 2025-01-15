@@ -65,6 +65,12 @@ def dang_ky():
             elif buoc == 4:
                 hinh_anh = request.files.get("hinh_anh")
                 dao.sua_nguoi_dung(id_nguoi_dung=session['id_nguoi_dung'],hinh_anh=hinh_anh)
+                del session["ten_nguoi_dung"]
+                del session["tai_khoan"]
+                del session["email"]
+                del session["mat_khau"]
+                del session["ma_xac_nhan_email"]
+                del session["id_nguoi_dung"]
                 return redirect("/DangNhap")
         return render_template("TrangDangKy.html",buoc=buoc,err=err)
     else:
