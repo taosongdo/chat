@@ -28,7 +28,7 @@ def dang_nhap():
 
 @app.route("/DangKy", methods=["GET","POST"])
 def dang_ky():
-    if not(current_user.is_authenicated):
+    if not(current_user.is_authenticated):
         buoc = 1
         err = None
         if request.method == "POST":
