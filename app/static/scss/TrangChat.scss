@@ -86,11 +86,11 @@ body {
 
 
                                     .img-avatar-ket-qua {
-                                        width: 80%;
+                                        width: 56px;
+                                        height: 56px;
                                         border-radius: 100%;
                                         overflow: hidden;
                                         border: 1px solid #cccccc;
-
                                     }
                                 }
 
@@ -135,7 +135,8 @@ body {
                             .div-avatar-nhom-tin-nhan {
 
                                 .img-avatar-nhom-tin-nhan {
-                                    height: 80%;
+                                    height: 80px;
+                                    width: 80px;
                                     border-radius: 100%;
                                     border: 2px solid #cccccc;
                                 }
@@ -198,7 +199,8 @@ body {
 
                         .div-avatar-nhom-tin-nhan-chon {
                             .img-avatar-nhom-tin-nhan-chon {
-                                height: 80%;
+                                height: 48px;
+                                width: 48px;
                                 border-radius: 100%;
                                 border: 2px solid #cccccc;
                             }
@@ -217,6 +219,24 @@ body {
                         overflow: auto;
                         color: #cccccc;
 
+                        .div-ds-hinh-anh-da-xem {
+                            display: flex;
+                            justify-content: end;
+                            padding: 0px 10px 0px 0px;
+
+                            .div-hinh-anh-da-xem {
+                                width: 20px;
+                                padding: 5px 0px 5px 0px;
+
+                                .img-hinh-anh-da-xem {
+                                    border: 1px solid #cccccc;
+                                    width: 20px;
+                                    height: 20px;
+                                    border-radius: 100%;
+                                }
+                            }
+                        }
+
                         .div-tin-nhan-trai {
                             display: flex;
                             padding: 10px;
@@ -226,12 +246,22 @@ body {
                                 padding: 10px;
                                 background-color: #2b2b2b;
                                 border-radius: 10px;
-                                padding: 10px;
-                                text-align: left;
+
+                                .div-noi-dung-trai {
+                                    text-align: left;
+                                }
+
+                                .div-thoi-gian-tin-nhan {
+                                    display: none;
+                                }
+
                             }
 
-
-
+                            .div-block-trai:hover {
+                                .div-thoi-gian-tin-nhan {
+                                    display: block;
+                                }
+                            }
                         }
 
                         .div-tin-nhan-phai {
@@ -244,11 +274,26 @@ body {
                                 padding: 10px;
                                 background-color: #2b2b2b;
                                 border-radius: 10px;
-                                padding: 10px;
-                                text-align: right;
-                                max-height: 100%;
+
+                                .div-noi-dung-phai {
+                                    text-align: right;
+                                }
+
+                                .div-thoi-gian-tin-nhan {
+                                    display: none;
+                                }
+
+                            }
+
+                            .div-block-phai:hover {
+                                .div-thoi-gian-tin-nhan {
+                                    display: block;
+                                }
                             }
                         }
+
+
+
                     }
 
                     .div-ds-tin-nhan::-webkit-scrollbar {

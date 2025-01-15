@@ -4,6 +4,81 @@
 // var idThoiGianDung
 // var idThoiGianLayTinNhan
 var idNhomHienThi
+var soLuongTin = 0
+
+const loadSuKienCuon = () => {
+    var divDsTinNhan = document.getElementById("idDivDsTinNhan")
+    divDsTinNhan.addEventListener("scroll", () => {
+        if (divDsTinNhan.scrollTop == 0) {
+            console.log("go")
+            soLuongTin += 20
+            fetch("/api/LayDsTinNhanTiepTheo", {
+                "method": "POST",
+                "body": JSON.stringify({
+                    "bat_dau": soLuongTin,
+                    "id_nhom": idNhomHienThi
+                }),
+                "headers": {
+                    "Content-type": "application/json"
+                }
+            }).then(res => res.json()).then(data => {
+
+                var divDsTinNhan = document.getElementById("idDivDsTinNhan")
+                noiDung = ``
+                chieuCao = divDsTinNhan.scrollHeight
+
+                for (tinNhan of data.ds_tin_nhan) {
+                    if (data.ds_thong_tin) {
+
+                        dsNguoiDung = data.ds_thong_tin[tinNhan.id_tin_nhan]
+                        if (dsNguoiDung) {
+                            noiDung += `<div class="div-ds-hinh-anh-da-xem">`
+
+                            for (nguoiDung of dsNguoiDung) {
+                                divHinhAnhDaXem = document.getElementById(`idDivHinhAnhDaXem${nguoiDung.id_nguoi_dung}`)
+                                divCha = divHinhAnhDaXem.parentElement
+                                divCha.removeChild(divHinhAnhDaXem)
+                                if (divCha.innerHTML.trim() == ``) {
+                                    divDsTinNhan.removeChild(divCha)
+                                }
+
+                                noiDung +=
+                                    `
+                                            <div class="div-hinh-anh-da-xem" id="idDivHinhAnhDaXem${nguoiDung.id_nguoi_dung}">
+                                                <img src="${nguoiDung.hinh_anh}" class="img-hinh-anh-da-xem" />
+                                            </div>
+                                        `
+                            }
+                            noiDung += `</div>`
+                        }
+                    }
+
+                    clas = "trai"
+                    if (tinNhan.kiem_tra) {
+                        clas = "phai"
+                    }
+
+                    noiDung +=
+                        `
+                            <div class="div-tin-nhan-${clas}">
+                                <div class="div-block-${clas}">
+                                    <div class="div-noi-dung-${clas}">
+                                        ${layDuLieu(tinNhan.noi_dung)}
+                                    </div>
+                                    <div class="div-thoi-gian-tin-nhan">
+                                        ${tinNhan.thoi_gian}
+                                    </div> 
+                                </div>
+                            </div>
+                        `
+                }
+                if (noiDung != ``) {
+                    divDsTinNhan.innerHTML = noiDung + divDsTinNhan.innerHTML
+                }
+            })
+        }
+    })
+}
 
 const layDuLieu = (tinNhan) => {
     tinNhan2 = ""
@@ -97,7 +172,6 @@ const loadNhomTinNhan = () => {
             "Content-type": "application-json"
         }
     }).then(res => res.json()).then(dsNhomChat => {
-        console.log(dsNhomChat)
         for (nhomChat of dsNhomChat) {
 
             if (!nhomChat.da_xem) {
@@ -137,7 +211,7 @@ const loadNhomTinNhan = () => {
     })
 }
 
-const taoNhom = (id_nguoi_dung, hinh_anh) => {
+const taoNhom = (id_nguoi_dung) => {
     fetch("/api/TaoNhomMoi", {
         "method": "POST",
         "body": JSON.stringify({
@@ -164,7 +238,7 @@ const taoNhom = (id_nguoi_dung, hinh_anh) => {
         divNhom = document.getElementById(`idDivNhomTinNhan${data.nhom.id_nhom}`)
         if (divNhom) {
             divDsNhom.removeChild(divNhom)
-        } 
+        }
 
         divDsNhom.innerHTML =
             `
@@ -181,42 +255,19 @@ const taoNhom = (id_nguoi_dung, hinh_anh) => {
             </div>
             `+ divDsNhom.innerHTML
 
-        inputThanhTimKiem.value = ""
-
-        var divDsTinNhan = document.getElementById("idDivDsTinNhan")
-        divDsTinNhan.innerHTML = ``
-
-        for (tinNhan of data.ds_tin_nhan) {
-            clas = "trai"
-            if (tinNhan.kiem_tra) {
-                clas = "phai"
-            }
-            divDsTinNhan.innerHTML +=
-                `
-                <div class="div-tin-nhan-${clas}">
-                    <div class="div-block-${clas}">
-                        ${layDuLieu(tinNhan.noi_dung)}
-                    </div>
-                </div >
-            `
-            divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
-        }
-
         var divThongTinNhomTinNhanChon = document.getElementById("idDivThongTinNhomTinNhanChon")
         divThongTinNhomTinNhanChon.innerHTML =
             `
-                <div class="div-avatar-nhom-tin-nhan-chon">
-                    <img class="img-avatar-nhom-tin-nhan-chon" src="${hinh_anh}" />
-                </div>
-                <h1 class="div-ten-nhom-tin-nhan-chon">${data.nhom.ten_nguoi_dung}</h1>
-                `
+            <div class="div-avatar-nhom-tin-nhan-chon">
+                <img class="img-avatar-nhom-tin-nhan-chon" src="${data.nhom.hinh_anh}" />
+            </div>
+            <h1 class="div-ten-nhom-tin-nhan-chon">${data.nhom.ten_nguoi_dung}</h1>
+            `
 
-        if (window.innerWidth < 768) {
-            var divNhomTinNhanChon = document.getElementById("idDivNhomTinNhanChon")
-            var divDsBan = document.getElementById("idDivDsBan")
-            divNhomTinNhanChon.classList.remove("d-none")
-            divDsBan.classList.add("d-none")
-        }
+        inputThanhTimKiem.value = ""
+
+        loadTinNhan(data)
+
     })
 
 }
@@ -228,14 +279,87 @@ const xemMenu = () => {
     divDsBan.classList.remove("d-none")
 }
 
-const chonNhom = (idNhom, tenNguoiDung, hinhAnh) => {
-    idNhomHienThi = idNhom
+const loadTinNhan = (data) => {
+    if (window.innerWidth < 768) {
+        var divNhomTinNhanChon = document.getElementById("idDivNhomTinNhanChon")
+        var divDsBan = document.getElementById("idDivDsBan")
+        divNhomTinNhanChon.classList.remove("d-none")
+        divDsBan.classList.add("d-none")
+    }
 
-    var divNhapLieuNutGui = document.getElementById("idDivNhapLieuNutGui")
-    divNhapLieuNutGui.classList.remove("div-nhap-lieu-nut-gui-2")
+    soLuongTin = 0
 
     var divDsTinNhan = document.getElementById("idDivDsTinNhan")
     divDsTinNhan.innerHTML = ``
+
+    for (tinNhan of data.ds_tin_nhan) {
+
+        if (data.ds_thong_tin) {
+            dsNguoiDung = data.ds_thong_tin[tinNhan.id_tin_nhan]
+            if (dsNguoiDung) {
+                noiDung = `<div class="div-ds-hinh-anh-da-xem">`
+                for (nguoiDung of dsNguoiDung) {
+                    noiDung +=
+                        `
+                            <div class="div-hinh-anh-da-xem" id="idDivHinhAnhDaXem${nguoiDung.id_nguoi_dung}">
+                                <img src="${nguoiDung.hinh_anh}" class="img-hinh-anh-da-xem" />
+                            </div>
+                        `
+                }
+                noiDung += `</div>`
+                divDsTinNhan.innerHTML += noiDung
+            }
+        }
+
+        clas = "trai"
+        if (tinNhan.kiem_tra) {
+            clas = "phai"
+        }
+
+        divDsTinNhan.innerHTML +=
+            `
+                <div class="div-tin-nhan-${clas}">
+                    <div class="div-block-${clas}">
+                        <div class="div-noi-dung-${clas}">
+                            ${layDuLieu(tinNhan.noi_dung)}
+                        </div>
+                        <div class="div-thoi-gian-tin-nhan">
+                            ${tinNhan.thoi_gian}
+                        </div> 
+                    </div>
+                </div>
+            `
+    }
+
+    if (data.ds_nguoi_dung) {
+        noiDung = `<div class="div-ds-hinh-anh-da-xem">`
+        for (nguoiDung of data.ds_nguoi_dung) {
+            noiDung +=
+                `
+                    <div class="div-hinh-anh-da-xem" id="idDivHinhAnhDaXem${nguoiDung.id_nguoi_dung}">
+                        <img src="${nguoiDung.hinh_anh}" class="img-hinh-anh-da-xem" />
+                    </div>
+                `
+        }
+        noiDung += `</div>`
+        divDsTinNhan.innerHTML += noiDung
+    }
+
+    var divNhapLieuNutGui = document.querySelector(`#idDivNhomTinNhan${idNhomHienThi} .div-thong-tin-nhom-tin-nhan`)
+    divNhapLieuNutGui.classList.remove("div-thong-tin-nhom-tin-nhan-2")
+    divDsTinNhan.innerHTML += `<div class="div-ds-hinh-anh-da-xem"></div>`
+
+    divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
+
+
+
+}
+const chonNhom = (idNhom, tenNguoiDung, hinhAnh) => {
+    idNhomHienThi = idNhom
+    soLuongTin = 0
+
+    var divNhapLieuNutGui = document.getElementById("idDivNhapLieuNutGui")
+    divNhapLieuNutGui.classList.remove("div-nhap-lieu-nut-gui-2")
 
     var divThongTinNhomTinNhanChon = document.getElementById("idDivThongTinNhomTinNhanChon")
     divThongTinNhomTinNhanChon.innerHTML =
@@ -255,37 +379,14 @@ const chonNhom = (idNhom, tenNguoiDung, hinhAnh) => {
             "Content-type": "application/json"
         }
     }).then(res => res.json()).then(data => {
-        for (tinNhan of data) {
-            clas = "trai"
-            if (tinNhan.kiem_tra) {
-                clas = "phai"
-            }
-            divDsTinNhan.innerHTML +=
-                `
-                    <div class="div-tin-nhan-${clas}">
-                        <div class="div-block-${clas}">
-                            ${layDuLieu(tinNhan.noi_dung)}
-                        </div>
-                    </div >
-                `
-            divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
-
-            var divNhapLieuNutGui = document.querySelector(`#idDivNhomTinNhan${idNhomHienThi} .div-thong-tin-nhom-tin-nhan`)
-            divNhapLieuNutGui.classList.remove("div-thong-tin-nhom-tin-nhan-2")
-        }
+        loadTinNhan(data)
     })
-    if (window.innerWidth < 768) {
-        var divNhomTinNhanChon = document.getElementById("idDivNhomTinNhanChon")
-        var divDsBan = document.getElementById("idDivDsBan")
-        divNhomTinNhanChon.classList.remove("d-none")
-        divDsBan.classList.add("d-none")
-    }
 }
 
 const gui = () => {
     var inputNhapLieu = document.getElementById("idInputNhapLieu")
     if (inputNhapLieu.value.trim() != "") {
-
+        soLuongTin++
         fetch("/api/TaoTinNhanMoi", {
             "method": "POST",
             "body": JSON.stringify({
@@ -298,14 +399,26 @@ const gui = () => {
         }).then(res => res.json()).then(data => {
 
             var divDsTinNhan = document.getElementById("idDivDsTinNhan")
+            var divDsHinhAnhDaXemCuoiCung = document.getElementsByClassName("div-ds-hinh-anh-da-xem")[document.getElementsByClassName("div-ds-hinh-anh-da-xem").length - 1]
+
+            if (divDsHinhAnhDaXemCuoiCung.innerHTML.trim() == ``) {
+                divDsTinNhan.removeChild(divDsHinhAnhDaXemCuoiCung)
+            }
+
             divDsTinNhan.innerHTML +=
                 `
-            <div class="div-tin-nhan-phai" >
-                <div class="div-block-phai">
-                    ${layDuLieu(data.noi_dung)}
-                </div>
-            </div >
-            `
+                    <div class="div-tin-nhan-phai" >
+                        <div class="div-block-phai">
+                            <div class="div-noi-dung-phai">
+                                ${layDuLieu(data.noi_dung)}
+                            </div>
+                            <div class="div-thoi-gian-tin-nhan">
+                                ${layDuLieu(data.thoi_gian)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div-ds-hinh-anh-da-xem"></div>
+                `
             divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
 
             divDsNhom = document.getElementById("idDivDsNhomChat")
@@ -313,18 +426,18 @@ const gui = () => {
             divDsNhom.removeChild(divNhom)
             divDsNhom.innerHTML =
                 `
-                <div class="div-nhom-tin-nhan" id = "idDivNhomTinNhan${data.id_nhom}">
-                    <button class="button-nhom-tin-nhan" onclick="chonNhom(${data.id_nhom},'${data.ten_nguoi_dung}','${data.hinh_anh}')">
-                        <div class="div-avatar-nhom-tin-nhan">
-                            <img class="img-avatar-nhom-tin-nhan" src="${data.hinh_anh}"/>
-                        </div>
-                        <div class="div-thong-tin-nhom-tin-nhan">
-                            <h3 class="h1-ten-nhom-tin-nhan">${data.ten_nguoi_dung}</h3>
-                            <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.noi_dung, data.kiem_tra)}</div>
-                        </div>
-                    </button>
-                </div>
-    `+ divDsNhom.innerHTML
+                    <div class="div-nhom-tin-nhan" id = "idDivNhomTinNhan${data.id_nhom}">
+                        <button class="button-nhom-tin-nhan" onclick="chonNhom(${data.id_nhom},'${data.ten_nguoi_dung}','${data.hinh_anh}')">
+                            <div class="div-avatar-nhom-tin-nhan">
+                                <img class="img-avatar-nhom-tin-nhan" src="${data.hinh_anh}"/>
+                            </div>
+                            <div class="div-thong-tin-nhom-tin-nhan">
+                                <h3 class="h1-ten-nhom-tin-nhan">${data.ten_nguoi_dung}</h3>
+                                <div class="div-tin-nhan-nhom-tin-nhan">${catNganDuLieu(data.noi_dung, data.kiem_tra)}</div>
+                            </div>
+                        </button>
+                    </div>
+                `+ divDsNhom.innerHTML
             inputNhapLieu.value = ""
         })
     }
@@ -349,18 +462,19 @@ const layDuLieuTheoThoiGian = () => {
             "headers": {
                 "Content-type": "application/json"
             }
-        }).then(res => res.json()).then(dsNhom => {
+        }).then(res => res.json()).then(data => {
 
-            divDsNhom = document.getElementById("idDivDsNhomChat")
-            dsNhom2 = ``
-            
-            for (nhom of dsNhom) {
+            var divDsNhom = document.getElementById("idDivDsNhomChat")
+            var dsNhom2 = ``
+            var divDsTinNhan = document.getElementById("idDivDsTinNhan")
+
+            for (nhom of data.ds_nhom) {
 
                 divNhom = document.getElementById(`idDivNhomTinNhan${nhom.id_nhom}`)
                 divDsNhom.removeChild(divNhom)
 
                 if (nhom.id_nhom != idNhomHienThi) {
-                    dsNhom2 =
+                    dsNhom2 +=
                         `
                             <div class="div-nhom-tin-nhan" id = "idDivNhomTinNhan${nhom.id_nhom}">
                                 <button class="button-nhom-tin-nhan" onclick="chonNhom(${nhom.id_nhom},'${nhom.ten_nguoi_dung}','${nhom.hinh_anh}')">
@@ -391,24 +505,51 @@ const layDuLieuTheoThoiGian = () => {
                                 </button>
                             </div>
                         `
-                    var divDsTinNhan = document.getElementById("idDivDsTinNhan")
-                    var clas = "trai"
-                    if (nhom.kiem_tra) {
-                        clas = "phai"
-                    }
-                    divDsTinNhan.innerHTML +=
-                        `
-                            <div class="div-tin-nhan-${clas}">
-                                <div class="div-block-${clas}">
-                                    ${layDuLieu(nhom.noi_dung)}
-                                </div>
-                            </div>
-                        `
-                    divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
                 }
             }
+            for (noiDung of data.ds_noi_dung) {
+                divDsTinNhan.innerHTML +=
+                    `
+                    <div class="div-tin-nhan-trai">
+                        <div class="div-block-trai">
+                            <div class="div-noi-dung-trai">
+                                ${layDuLieu(noiDung.noi_dung)}
+                            </div>
+                            <div class="div-thoi-gian-tin-nhan">
+                                ${noiDung.thoi_gian}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div-ds-hinh-anh-da-xem"></div>
+                `
+                divDsTinNhan.scrollTop = divDsTinNhan.scrollHeight
+            }
+
             if (dsNhom2 != ``) {
                 divDsNhom.innerHTML = dsNhom2 + divDsNhom.innerHTML
+            }
+
+            for (nguoiDung of data.ds_nguoi_xem) {
+                dsDivDsHinhAnhDaXem = document.getElementsByClassName("div-ds-hinh-anh-da-xem")
+                divDsHinhAnhDaXemCuoiCung = dsDivDsHinhAnhDaXem[dsDivDsHinhAnhDaXem.length - 1]
+
+                divHinhAnhDaXem = document.getElementById(`idDivHinhAnhDaXem${nguoiDung.id_nguoi_dung}`)
+
+                if (!(divHinhAnhDaXem.parentElement == divDsHinhAnhDaXemCuoiCung)) {
+                    noiDung = divHinhAnhDaXem.innerHTML
+
+                    divDsHinhAnhDaXemCuoiCung.innerHTML += `
+                        <div class="div-hinh-anh-da-xem" id=idDivHinhAnhDaXem${nguoiDung.id_nguoi_dung}>
+                            ${noiDung}
+                        </div>
+                    `
+
+                    divCha = divHinhAnhDaXem.parentElement
+                    divCha.removeChild(divHinhAnhDaXem)
+                    if (divCha.innerHTML.trim() == ``) {
+                        divDsTinNhan.removeChild(divCha)
+                    }
+                }
             }
         })
     }, 1000)
@@ -423,4 +564,5 @@ window.onload = async () => {
     loadNhomTinNhan()
     loadSuKienEnter()
     layDuLieuTheoThoiGian()
+    loadSuKienCuon()
 }
