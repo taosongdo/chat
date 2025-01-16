@@ -10,7 +10,7 @@ const loadSuKienCuon = () => {
     var divDsTinNhan = document.getElementById("idDivDsTinNhan")
     divDsTinNhan.addEventListener("scroll", () => {
         if (divDsTinNhan.scrollTop == 0) {
-            soLuongTin += 20
+            soLuongTin += 10
             fetch("/api/LayDsTinNhanTiepTheo", {
                 "method": "POST",
                 "body": JSON.stringify({

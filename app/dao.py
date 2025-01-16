@@ -282,7 +282,7 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
             }
 
 def lay_ds_tin_nhan(id_nhom,id_nguoi_dung,bat_dau=0):
-    ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == id_nhom).order_by(TinNhan.id_tin_nhan.desc()).offset(bat_dau).limit(20).all()
+    ds_tin_nhan = TinNhan.query.filter(TinNhan.id_nhom == id_nhom).order_by(TinNhan.id_tin_nhan.desc()).offset(bat_dau).limit(10).all()
     ds_tin_nhan = list(reversed(ds_tin_nhan))
     ds_nguoi_dung_tin_nhan = db.session.query(NguoiDung_TinNhan)\
     .join(NguoiDung,NguoiDung_TinNhan.id_nguoi_dung == NguoiDung.id_nguoi_dung)\
