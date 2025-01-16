@@ -242,7 +242,7 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
         nguoi_dung_tin_nhan[1].da_nhan = True
         
     ds_noi_dung = []
-    ds_nguoi_dung_tin_nhan = db.session.query(TinNhan.noi_dung,NguoiDung_TinNhan)\
+    ds_nguoi_dung_tin_nhan = db.session.query(TinNhan.noi_dung,TinNhan.thoi_gian)\
     .join(NguoiDung,NguoiDung_TinNhan.id_nguoi_dung == NguoiDung.id_nguoi_dung)\
     .join(TinNhan,NguoiDung_TinNhan.id_tin_nhan == TinNhan.id_tin_nhan)\
     .join(Nhom,Nhom.id_nhom == TinNhan.id_nhom)\
@@ -252,7 +252,8 @@ def lay_ds_nhom_chua_nhan(id_nguoi_dung,id_nhom):
     .all()
     for nguoi_dung_tin_nhan in ds_nguoi_dung_tin_nhan:
         ds_noi_dung.append({
-            "noi_dung":nguoi_dung_tin_nhan[0]
+            "noi_dung":nguoi_dung_tin_nhan[0],
+            "thoi_gian":nguoi_dung_tin_nhan[1]
         })
         nguoi_dung_tin_nhan[1].da_xem = True
 
