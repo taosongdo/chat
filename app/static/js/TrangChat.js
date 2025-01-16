@@ -83,7 +83,7 @@ const loadSuKienCuon = () => {
 const layDuLieu = (tinNhan) => {
     tinNhan2 = ""
     if (tinNhan.includes("https://")) {
-        tinNhan = `<a href="${tinNhan}}">${tinNhan}</a>`
+        tinNhan = `<a href="${tinNhan}">${tinNhan}</a>`
     }
 
     while (20 < tinNhan.length) {
